@@ -19,9 +19,9 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 font-light"
         >
-          Contributor to Meta's{" "}
-          <span className="text-accent font-medium">TorchRL</span> |
-          Independent ML R&D Engineer.
+          Independent{" "}
+          <span className="text-accent font-medium">Machine Learning</span>{" "}
+          R&D Engineer.
         </motion.p>
 
         <motion.div
