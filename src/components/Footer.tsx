@@ -15,12 +15,22 @@ const Footer = () => (
         <p className="text-muted-foreground mb-8">
           Open to research collaborations and exciting opportunities.
         </p>
-        <a
-          href="mailto:hello@aneeshjonnala.com"
-          className="btn-glass inline-block"
-        >
-          Get in Touch
-        </a>
+        <div className="flex gap-4 justify-center">
+          <a
+            href="https://www.linkedin.com/in/aneeshjonnala"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-glass inline-block"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="mailto:hello@aneeshjonnala.com"
+            className="btn-glass inline-block"
+          >
+            Email
+          </a>
+        </div>
         <p className="mt-12 text-xs text-muted-foreground font-mono">
           © 2026 Aneesh Jonnala
         </p>
