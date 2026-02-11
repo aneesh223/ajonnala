@@ -2,16 +2,24 @@ import { motion } from "framer-motion";
 
 const skillCategories = [
   {
-    label: "Primary",
-    skills: ["PyTorch", "Reinforcement Learning", "Quant Finance", "Computer Vision (Learning)"],
+    label: "AI & Finance",
+    skills: ["PyTorch", "Reinforcement Learning", "Quantitative Finance", "Artificial Intelligence", "Natural Language Processing", "Algorithmic Trading", "Computer Vision (Learning)"],
   },
   {
     label: "Languages",
     skills: ["Python", "Java", "R", "JavaScript", "C++ (Learning)"],
   },
   {
-    label: "Tools",
-    skills: ["Git", "Flask", "Django", "Adobe Camera Raw"],
+    label: "Tools & Frameworks",
+    skills: ["Git", "Flask", "Django", "Twilio", "Adobe Camera Raw", "OOP", "Software Architecture"],
+  },
+  {
+    label: "Photography & Media",
+    skills: ["Photography", "Event Photography", "Event Management", "Event Planning"],
+  },
+  {
+    label: "Education & Leadership",
+    skills: ["Teaching", "Tutoring", "Educational Technology", "Educational Leadership", "Classroom Management", "Working with Children", "Working with Adolescents", "Communication"],
   },
 ];
 
