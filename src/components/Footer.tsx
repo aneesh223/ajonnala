@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Linkedin, Mail } from "lucide-react";
 
 const Footer = () => (
   <footer id="contact" className="py-16 px-4 border-t border-border">
@@ -15,20 +16,20 @@ const Footer = () => (
         <p className="text-muted-foreground mb-8">
           Open to research collaborations and exciting opportunities.
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-6 justify-center">
           <a
             href="https://www.linkedin.com/in/aneeshjonnala"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-glass inline-block"
+            className="text-muted-foreground hover:text-primary transition-colors"
           >
-            LinkedIn
+            <Linkedin className="w-6 h-6" />
           </a>
           <a
             href="mailto:hello@aneeshjonnala.com"
-            className="btn-glass inline-block"
+            className="text-muted-foreground hover:text-primary transition-colors"
           >
-            Email
+            <Mail className="w-6 h-6" />
           </a>
         </div>
         <p className="mt-12 text-xs text-muted-foreground font-mono">
