@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 const skillCategories = [
   {
     label: "Primary",
-    skills: ["PyTorch", "Reinforcement Learning", "Quant Finance", "Computer Vision"],
+    skills: ["PyTorch", "Reinforcement Learning", "Quant Finance", "Computer Vision (Learning)"],
   },
   {
     label: "Languages",
-    skills: ["Python", "Java", "R", "JavaScript"],
+    skills: ["Python", "Java", "R", "JavaScript", "C++ (Learning)"],
   },
   {
     label: "Tools",
