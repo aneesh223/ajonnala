@@ -18,7 +18,7 @@ const Footer = () => (
         </p>
         <div className="flex gap-6 justify-center">
           <a
-            href="https://www.linkedin.com/in/aneeshjonnala"
+            href="https://www.linkedin.com/in/aneesh-jonnala"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary transition-colors"
@@ -26,7 +26,7 @@ const Footer = () => (
             <Linkedin className="w-6 h-6" />
           </a>
           <a
-            href="mailto:hello@aneeshjonnala.com"
+            href="mailto:aneeshjonnala1337@gmail.com"
             className="text-muted-foreground hover:text-primary transition-colors"
           >
             <Mail className="w-6 h-6" />
