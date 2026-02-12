@@ -16,18 +16,18 @@ const experiences = [
       "A photography startup specializing in portraits, events, and sports media.",
   },
   {
-    role: "Chapter President",
-    org: "Athletes to Aid",
-    location: "",
-    description:
-      "Raised over $12,000+ serving underserved Columbus athletes.",
-  },
-  {
     role: "Code Sensei",
     org: "Code Ninjas",
     location: "",
     description:
       "Teaching STEM and coding fundamentals to students ages 5-14.",
+  },
+  {
+    role: "Chapter President",
+    org: "Athletes to Aid",
+    location: "",
+    description:
+      "Helped raise over $12,000+ serving underserved Columbus athletes.",
   },
 ];
 
