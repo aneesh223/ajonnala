@@ -6,16 +6,16 @@ const techSkills = [
     skills: ["PyTorch", "Reinforcement Learning", "Artificial Intelligence", "Natural Language Processing", "Computer Vision (Learning)"],
   },
   {
-    label: "Finance & Trading",
-    skills: ["Quantitative Finance", "Algorithmic Trading"],
-  },
-  {
     label: "Languages",
     skills: ["Python", "Java", "R", "JavaScript", "C++ (Learning)"],
   },
   {
     label: "Tools & Frameworks",
     skills: ["Git", "Flask", "Django", "Twilio", "Adobe Camera Raw", "OOP", "Software Architecture"],
+  },
+  {
+    label: "Finance & Trading",
+    skills: ["Quantitative Finance", "Algorithmic Trading"],
   },
 ];
 
