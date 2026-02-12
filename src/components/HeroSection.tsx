@@ -30,10 +30,14 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <a href="#projects" className="btn-glass">
-            View Research
-          </a>
-          <a href="#contact" className="btn-primary-gradient">
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="btn-primary-gradient"
+          >
             Contact Me
           </a>
         </motion.div>

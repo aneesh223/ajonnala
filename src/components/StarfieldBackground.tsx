@@ -91,7 +91,7 @@ const StarfieldBackground = () => {
   return (
     <Particles
       id="starfield"
-      className="fixed inset-0 -z-10"
+      className="fixed inset-0 z-0"
       options={options}
     />
   );
