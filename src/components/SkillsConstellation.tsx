@@ -7,7 +7,7 @@ const techSkills = [
   },
   {
     label: "Finance & Trading",
-    skills: ["Quantitative Finance", "Algorithmic Trading", "Small Business Management", "Entrepreneurship"],
+    skills: ["Quantitative Finance", "Algorithmic Trading"],
   },
   {
     label: "Languages",
@@ -22,7 +22,7 @@ const techSkills = [
 const nonTechSkills = [
   {
     label: "Photography & Media",
-    skills: ["Photography", "Event Photography", "Event Management", "Event Planning"],
+    skills: ["Photography", "Event Photography", "Event Management", "Event Planning", "Small Business Management", "Entrepreneurship"],
   },
   {
     label: "Education & Leadership",
