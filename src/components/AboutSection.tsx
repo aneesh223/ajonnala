@@ -19,12 +19,12 @@ const AboutSection = () => {
               <span className="text-foreground font-medium">
                 Olentangy Liberty High School
               </span>{" "}
-              and a self-taught programmer passionate about the intersection of{" "}
+              and a self-taught programmer passionate about{" "}
               <span className="gradient-text font-semibold">
-                AI and Financial Markets
-              </span>
-              . I aspire to major in CS with a specialization in Machine
-              Learning.
+                real world applications
+              </span>{" "}
+              of AI and Machine Learning. I plan to major in CS with a
+              specialization in Machine Learning.
             </p>
           </div>
         </motion.div>
