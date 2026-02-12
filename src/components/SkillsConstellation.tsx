@@ -11,7 +11,7 @@ const techSkills = [
   },
   {
     label: "Tools & Frameworks",
-    skills: ["Git", "Flask", "Django", "Twilio", "Adobe Camera Raw", "OOP", "Software Architecture"],
+    skills: ["Git", "Flask", "Django", "Twilio", "OOP", "Software Architecture"],
   },
   {
     label: "Finance & Trading",
@@ -22,7 +22,7 @@ const techSkills = [
 const nonTechSkills = [
   {
     label: "Photography & Media",
-    skills: ["Photography", "Event Photography", "Event Management", "Event Planning", "Small Business Management", "Entrepreneurship"],
+    skills: ["Photography", "Event Photography", "Event Management", "Event Planning", "Adobe Camera Raw", "Adobe Photoshop", "Adobe Lightroom", "Small Business Management", "Entrepreneurship"],
   },
   {
     label: "Education & Leadership",
