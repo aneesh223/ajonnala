@@ -62,7 +62,7 @@ const ExperienceTimeline = () => {
                       {exp.role}
                     </h3>
                     <span className="text-primary font-mono text-sm">
-                      @ {exp.org}
+                      {exp.org}
                     </span>
                     {exp.location && (
                       <span className="text-muted-foreground text-xs font-mono">
