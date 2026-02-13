@@ -76,7 +76,7 @@ const SkillsConstellation = () => {
         </h2>
 
         <h3 className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider mb-6 border-b border-border/30 pb-2">Technical</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-8">
             {leftColumn.map((cat, ci) => (
               <CategoryBlock key={cat.label} cat={cat} ci={ci} />
