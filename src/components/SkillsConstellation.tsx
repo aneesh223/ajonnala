@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 const techSkills = [
   {
     label: "AI",
-    skills: ["PyTorch", "Reinforcement Learning", "Artificial Intelligence", "Natural Language Processing", "Computer Vision (Learning)"],
+    skills: ["PyTorch", "Reinforcement Learning", "Natural Language Processing", "Computer Vision (Learning)"],
   },
   {
     label: "Languages",
@@ -22,11 +22,11 @@ const techSkills = [
 const nonTechSkills = [
   {
     label: "Photography & Media",
-    skills: ["Photography", "Event Photography", "Event Management", "Event Planning", "Adobe Camera Raw", "Adobe Photoshop", "Adobe Lightroom", "Small Business Management", "Entrepreneurship"],
+    skills: ["Photography", "Event Management", "Adobe Photoshop", "Adobe Lightroom", "Entrepreneurship"],
   },
   {
     label: "Education & Leadership",
-    skills: ["Teaching", "Tutoring", "Educational Technology", "Educational Leadership", "Classroom Management", "Working with Children", "Working with Adolescents", "Communication"],
+    skills: ["Teaching", "Educational Technology", "Educational Leadership", "Classroom Management", "Working with Children", "Communication"],
   },
 ];
 
