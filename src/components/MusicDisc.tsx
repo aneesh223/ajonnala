@@ -86,6 +86,7 @@ const MusicDisc = () => {
   useEffect(() => {
     const unsubscribe = fakeBeat.onBeat((strength) => {
       // Dispatch custom event that StarfieldBackground can listen to
+      console.log('Fake beat generated:', strength);
       window.dispatchEvent(new CustomEvent('musicbeat', { detail: { strength } }));
     });
 

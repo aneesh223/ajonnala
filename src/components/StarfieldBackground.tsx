@@ -30,60 +30,8 @@ const StarfieldBackground = () => {
 
   // Subscribe to beat events and trigger pulsations
   useEffect(() => {
-    // Only subscribe if Web Audio API is supported
-    if (!isWebAudioSupported) {
-      // If Web Audio is not supported, listen for fake beats instead
-      const handleFakeBeat = ((event: CustomEvent) => {
-        const strength = event.detail.strength;
-        setBeatStrength(strength);
-
-        // Get particles from container
-        if (!containerRef.current) return;
-
-        const container = containerRef.current;
-        const particles = container.particles?.array || [];
-
-        if (particles.length === 0) return;
-
-        // Convert particles to format expected by selectStars
-        const particleData = particles.map((p: any) => ({
-          id: p.id,
-          size: p.size?.value || 1,
-        }));
-
-        // Calculate selection percentages based on configuration
-        const minPercent = config.selectionPercentage * 0.5;
-        const maxPercent = config.selectionPercentage * 1.5;
-
-        // Use selectStars with custom configuration
-        const selectedParticles = selectStars(particleData, strength, {
-          minSelectionPercent: minPercent,
-          maxSelectionPercent: maxPercent,
-          sizeWeightExponent: 2,
-        });
-
-        // Start pulsations via PulsationManager with configured intensity
-        const currentTime = performance.now();
-        selectedParticles.forEach((particle) => {
-          const adjustedStrength = strength * config.pulsationIntensity;
-
-          pulsationManagerRef.current?.startPulsation(
-            particle.id,
-            adjustedStrength,
-            particle.size,
-            currentTime
-          );
-        });
-      }) as EventListener;
-
-      window.addEventListener('musicbeat', handleFakeBeat);
-
-      return () => {
-        window.removeEventListener('musicbeat', handleFakeBeat);
-      };
-    }
-
-    const unsubscribe = onBeat((strength) => {
+    // Handler for processing beats (used by both real and fake detection)
+    const processBeat = (strength: number) => {
       setBeatStrength(strength);
 
       // Get particles from container
@@ -101,8 +49,6 @@ const StarfieldBackground = () => {
       }));
 
       // Calculate selection percentages based on configuration
-      // The config.selectionPercentage is the base (at medium beat strength)
-      // We scale it: weak beats use 50% of base, strong beats use 150% of base
       const minPercent = config.selectionPercentage * 0.5;
       const maxPercent = config.selectionPercentage * 1.5;
 
@@ -110,13 +56,12 @@ const StarfieldBackground = () => {
       const selectedParticles = selectStars(particleData, strength, {
         minSelectionPercent: minPercent,
         maxSelectionPercent: maxPercent,
-        sizeWeightExponent: 2, // Keep quadratic weighting
+        sizeWeightExponent: 2,
       });
 
       // Start pulsations via PulsationManager with configured intensity
       const currentTime = performance.now();
       selectedParticles.forEach((particle) => {
-        // Scale beat strength by pulsation intensity configuration
         const adjustedStrength = strength * config.pulsationIntensity;
 
         pulsationManagerRef.current?.startPulsation(
@@ -126,11 +71,30 @@ const StarfieldBackground = () => {
           currentTime
         );
       });
-    });
+    };
 
-    // Unsubscribe on unmount
+    // Always listen for fake beats (from MusicDisc)
+    const handleFakeBeat = ((event: CustomEvent) => {
+      console.log('StarfieldBackground received fake beat:', event.detail.strength);
+      processBeat(event.detail.strength);
+    }) as EventListener;
+
+    window.addEventListener('musicbeat', handleFakeBeat);
+
+    // Also subscribe to real audio analysis if supported
+    let unsubscribeRealAudio: (() => void) | undefined;
+    if (isWebAudioSupported) {
+      unsubscribeRealAudio = onBeat((strength) => {
+        processBeat(strength);
+      });
+    }
+
+    // Cleanup
     return () => {
-      unsubscribe();
+      window.removeEventListener('musicbeat', handleFakeBeat);
+      if (unsubscribeRealAudio) {
+        unsubscribeRealAudio();
+      }
     };
   }, [onBeat, isWebAudioSupported, config]);
 
