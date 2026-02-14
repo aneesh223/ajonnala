@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Volume2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useAudio } from "@/contexts/AudioContext";
+import { useAudioAnalysis } from "@/contexts/AudioAnalysisContext";
 
 interface Track {
   trackName: string;
@@ -25,6 +25,7 @@ const MusicDisc = () => {
   const [showNowPlaying, setShowNowPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const nowPlayingTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const { registerAudioElement, unregisterAudioElement } = useAudioAnalysis();
 
   useEffect(() => {
     const url = encodeURIComponent("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song");
@@ -41,6 +42,18 @@ const MusicDisc = () => {
       })
       .catch(() => { });
   }, []);
+
+  // Register audio element with AudioAnalysisContext
+  useEffect(() => {
+    if (audioRef.current) {
+      registerAudioElement(audioRef.current);
+    }
+
+    // Cleanup on unmount
+    return () => {
+      unregisterAudioElement();
+    };
+  }, [registerAudioElement, unregisterAudioElement]);
 
   const playRandom = useCallback(() => {
     const track = tracks[Math.floor(Math.random() * tracks.length)];
