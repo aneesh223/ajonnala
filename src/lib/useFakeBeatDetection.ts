@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { FakeBeatDetector } from './fakeBeatDetection';
-import { useAudioAnalysis } from '@/contexts/AudioAnalysisContext';
 
 /**
  * Hook that integrates fake beat detection with the AudioAnalysisContext.
@@ -15,7 +14,7 @@ export function useFakeBeatDetection() {
         const detector = new FakeBeatDetector(100);
         detectorRef.current = detector;
 
-        // Subscribe to fake beats
+        // Subscribe to fake beats and forward to our callbacks
         const unsubscribe = detector.onBeat((strength) => {
             // Call all registered callbacks
             beatCallbacksRef.current.forEach(callback => {
@@ -34,9 +33,18 @@ export function useFakeBeatDetection() {
     }, []);
 
     return {
-        start: () => detectorRef.current?.start(),
-        stop: () => detectorRef.current?.stop(),
-        setBPM: (bpm: number) => detectorRef.current?.setBPM(bpm),
+        start: () => {
+            console.log('FakeBeatDetector: start() called');
+            detectorRef.current?.start();
+        },
+        stop: () => {
+            console.log('FakeBeatDetector: stop() called');
+            detectorRef.current?.stop();
+        },
+        setBPM: (bpm: number) => {
+            console.log('FakeBeatDetector: setBPM() called with', bpm);
+            detectorRef.current?.setBPM(bpm);
+        },
         onBeat: (callback: (strength: number) => void) => {
             beatCallbacksRef.current.add(callback);
             return () => beatCallbacksRef.current.delete(callback);

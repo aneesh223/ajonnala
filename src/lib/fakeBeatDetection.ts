@@ -20,14 +20,19 @@ export class FakeBeatDetector {
      * Start generating fake beats
      */
     start(): void {
-        if (this.isRunning) return;
+        if (this.isRunning) {
+            console.log('FakeBeatDetector: Already running');
+            return;
+        }
 
         this.isRunning = true;
         const intervalMs = (60 / this.bpm) * 1000;
+        console.log(`FakeBeatDetector: Starting at ${this.bpm} BPM (interval: ${intervalMs.toFixed(0)}ms)`);
 
         this.intervalId = window.setInterval(() => {
             // Vary beat strength slightly for more natural feel (0.6-1.0)
             const strength = 0.6 + Math.random() * 0.4;
+            console.log(`FakeBeatDetector: Beat! strength=${strength.toFixed(2)}, callbacks=${this.callbacks.size}`);
 
             this.callbacks.forEach(callback => {
                 try {
