@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Volume2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAudio } from "@/contexts/AudioContext";
 
 interface Track {
   trackName: string;
@@ -24,6 +25,9 @@ const MusicDisc = () => {
   const [showNowPlaying, setShowNowPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const nowPlayingTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const { triggerBeat } = useAudio();
 
   useEffect(() => {
     const url = encodeURIComponent("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song");
@@ -40,6 +44,58 @@ const MusicDisc = () => {
       })
       .catch(() => { });
   }, []);
+
+  // Setup audio analysis for beat detection
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    const setupAudioContext = () => {
+      if (!audioContextRef.current && audioRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const source = audioContextRef.current.createMediaElementSource(audioRef.current);
+        analyserRef.current = audioContextRef.current.createAnalyser();
+        analyserRef.current.fftSize = 256;
+        source.connect(analyserRef.current);
+        analyserRef.current.connect(audioContextRef.current.destination);
+      }
+    };
+
+    audioRef.current.addEventListener('play', setupAudioContext);
+    return () => {
+      audioRef.current?.removeEventListener('play', setupAudioContext);
+    };
+  }, []);
+
+  // Beat detection loop
+  useEffect(() => {
+    if (!isPlaying || !analyserRef.current) return;
+
+    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
+    let lastBeatTime = 0;
+    const minTimeBetweenBeats = 200; // ms
+
+    const detectBeat = () => {
+      if (!analyserRef.current || !isPlaying) return;
+
+      analyserRef.current.getByteFrequencyData(dataArray);
+
+      // Focus on bass frequencies (0-100Hz range)
+      const bassRange = dataArray.slice(0, 8);
+      const bassAvg = bassRange.reduce((a, b) => a + b, 0) / bassRange.length;
+
+      const now = Date.now();
+      if (bassAvg > 180 && now - lastBeatTime > minTimeBetweenBeats) {
+        const intensity = Math.min(bassAvg / 255, 1);
+        triggerBeat(intensity);
+        lastBeatTime = now;
+      }
+
+      requestAnimationFrame(detectBeat);
+    };
+
+    const animationId = requestAnimationFrame(detectBeat);
+    return () => cancelAnimationFrame(animationId);
+  }, [isPlaying, triggerBeat]);
 
   const playRandom = useCallback(() => {
     const track = tracks[Math.floor(Math.random() * tracks.length)];
