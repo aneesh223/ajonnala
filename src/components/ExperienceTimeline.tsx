@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 
 const experiences = [
   {
     role: "Open Source Contributor",
     org: "PyTorch",
     url: "https://github.com/pytorch/rl",
+    label: "View Repository",
     location: "Remote",
     description:
       "Architectured 'FinancialRegimeEnv', a custom trading environment for training RL agents.",
@@ -13,6 +15,7 @@ const experiences = [
     role: "Co-Founder",
     org: "ISO and Company Media",
     url: "https://isoandco.mypixieset.com",
+    label: "View Portfolio",
     location: "",
     description:
       "A photography startup specializing in portraits, events, and sports media.",
@@ -21,6 +24,7 @@ const experiences = [
     role: "Code Sensei",
     org: "Code Ninjas",
     url: "",
+    label: "",
     location: "",
     description:
       "Teaching STEM and coding fundamentals to students ages 5-14.",
@@ -29,6 +33,7 @@ const experiences = [
     role: "Chapter President",
     org: "Athletes to Aid",
     url: "",
+    label: "",
     location: "",
     description:
       "Helped raise over $12,000+ serving underserved Columbus athletes.",
@@ -65,24 +70,29 @@ const ExperienceTimeline = () => {
                     <h3 className="text-foreground font-semibold">
                       {exp.role}
                     </h3>
-                    {exp.url ? (
-                      <a href={exp.url} target="_blank" rel="noopener noreferrer" className="text-primary font-mono text-sm hover:underline underline-offset-4 hover:text-accent transition-colors duration-200">
-                        {exp.org}
-                      </a>
-                    ) : (
-                      <span className="text-primary font-mono text-sm">
-                        {exp.org}
-                      </span>
-                    )}
+                    <span className="text-primary font-mono text-sm">
+                      {exp.org}
+                    </span>
                     {exp.location && (
                       <span className="text-muted-foreground text-xs font-mono">
                         ({exp.location})
                       </span>
                     )}
                   </div>
-                  <p className="text-foreground/70 text-sm leading-relaxed">
+                  <p className="text-foreground/70 text-sm leading-relaxed mb-3">
                     {exp.description}
                   </p>
+                  {exp.url && (
+                    <a
+                      href={exp.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono text-muted-foreground border border-border bg-secondary/50 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
+                    >
+                      {exp.label}
+                      <ExternalLink size={12} />
+                    </a>
+                  )}
                 </div>
               </motion.div>
             ))}
