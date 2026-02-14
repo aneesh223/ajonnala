@@ -23,24 +23,37 @@ const MusicDisc = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<string>("");
   const [showNowPlaying, setShowNowPlaying] = useState(false);
+  const [error, setError] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement>(null);
   const nowPlayingTimeout = useRef<ReturnType<typeof setTimeout>>();
   const { registerAudioElement, unregisterAudioElement } = useAudioAnalysis();
 
   useEffect(() => {
-    const url = encodeURIComponent("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song");
-    fetch(`https://api.allorigins.win/get?url=${url}`)
-      .then((res) => res.json())
-      .then((wrapper) => {
-        const data = JSON.parse(wrapper.contents);
+    // Fetch directly from iTunes API (CORS-enabled)
+    fetch("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song&limit=25")
+      .then((res) => {
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
         const excludedTracks = ["wrong faces", "have to", "pure fantasy"];
         const filtered = data.results
           ?.filter((r: any) => r.collectionName?.toLowerCase().includes("icon"))
           .filter((r: any) => !excludedTracks.some(excluded => r.trackName?.toLowerCase().includes(excluded)))
+          .filter((r: any) => r.previewUrl) // Only include tracks with preview URLs
           .map((r: any) => ({ trackName: r.trackName, previewUrl: r.previewUrl }));
-        if (filtered && filtered.length > 0) setTracks(filtered);
+
+        if (filtered && filtered.length > 0) {
+          setTracks(filtered);
+          setError("");
+        } else {
+          setError("No tracks found with preview URLs");
+        }
       })
-      .catch(() => { });
+      .catch((err) => {
+        console.error("Failed to fetch tracks:", err);
+        setError("Failed to load music. Using fallback tracks.");
+      });
   }, []);
 
   // Register audio element with AudioAnalysisContext
@@ -57,15 +70,28 @@ const MusicDisc = () => {
 
   const playRandom = useCallback(() => {
     const track = tracks[Math.floor(Math.random() * tracks.length)];
-    if (!track.previewUrl || !audioRef.current) return;
+    if (!track.previewUrl || !audioRef.current) {
+      setError("No valid track URL available");
+      return;
+    }
+
     audioRef.current.src = track.previewUrl;
     audioRef.current.volume = 0.2;
-    audioRef.current.play();
-    setCurrentTrack(track.trackName);
-    setIsPlaying(true);
-    setShowNowPlaying(true);
-    clearTimeout(nowPlayingTimeout.current);
-    nowPlayingTimeout.current = setTimeout(() => setShowNowPlaying(false), 3000);
+
+    audioRef.current.play()
+      .then(() => {
+        setCurrentTrack(track.trackName);
+        setIsPlaying(true);
+        setShowNowPlaying(true);
+        setError("");
+        clearTimeout(nowPlayingTimeout.current);
+        nowPlayingTimeout.current = setTimeout(() => setShowNowPlaying(false), 3000);
+      })
+      .catch((err) => {
+        console.error("Playback failed:", err);
+        setError("Playback failed. Click again to retry.");
+        setIsPlaying(false);
+      });
   }, [tracks]);
 
   const toggle = () => {
@@ -75,8 +101,15 @@ const MusicDisc = () => {
       setIsPlaying(false);
     } else {
       if (audioRef.current.src && audioRef.current.currentTime > 0) {
-        audioRef.current.play();
-        setIsPlaying(true);
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+            setError("");
+          })
+          .catch((err) => {
+            console.error("Resume failed:", err);
+            setError("Resume failed. Click again to retry.");
+          });
       } else {
         playRandom();
       }
@@ -87,8 +120,24 @@ const MusicDisc = () => {
     playRandom();
   };
 
+  const handleAudioError = () => {
+    setError("Audio playback error. Trying next track...");
+    setIsPlaying(false);
+    // Try playing another track after a short delay
+    setTimeout(() => {
+      playRandom();
+    }, 1000);
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+      {/* Error toast */}
+      {error && (
+        <div className="mb-1 rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-1.5 text-xs text-red-400 backdrop-blur-md">
+          {error}
+        </div>
+      )}
+
       {/* Now Playing toast */}
       <div
         className={`pointer-events-none mb-1 rounded-lg border border-border/50 bg-background/80 px-3 py-1.5 text-xs text-foreground backdrop-blur-md transition-all duration-300 ${showNowPlaying && currentTrack
@@ -151,7 +200,7 @@ const MusicDisc = () => {
         </TooltipContent>
       </Tooltip>
 
-      <audio ref={audioRef} onEnded={handleEnded} className="hidden" />
+      <audio ref={audioRef} onEnded={handleEnded} onError={handleAudioError} className="hidden" />
     </div>
   );
 };
