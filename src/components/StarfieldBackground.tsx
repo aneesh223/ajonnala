@@ -41,10 +41,15 @@ const StarfieldBackground = () => {
       }
 
       const container = containerRef.current;
-      const particles = container.particles?.array || [];
+
+      // Try multiple ways to access particles (tsparticles API varies)
+      const particles = container.particles?.array ||
+        container.particles?._array ||
+        container._particles?.array ||
+        [];
 
       if (particles.length === 0) {
-        console.log('processBeat: No particles found');
+        console.log('processBeat: No particles found, container:', container);
         return;
       }
 
@@ -124,12 +129,17 @@ const StarfieldBackground = () => {
       // Only update particles if there are active pulsations
       if (scaleMultipliers.size > 0) {
         const container = containerRef.current;
-        const particles = container.particles?.array || [];
+
+        // Try multiple ways to access particles (tsparticles API varies)
+        const particles = container.particles?.array ||
+          container.particles?._array ||
+          container._particles?.array ||
+          [];
 
         // Debug: log pulsation info
         if (scaleMultipliers.size > 0) {
           const firstScale = Array.from(scaleMultipliers.values())[0];
-          console.log(`Pulsating ${scaleMultipliers.size} stars, scale example: ${firstScale.toFixed(2)}`);
+          console.log(`Pulsating ${scaleMultipliers.size} stars, scale example: ${firstScale.toFixed(2)}, particles: ${particles.length}`);
         }
 
         // Batch particle updates to minimize overhead
