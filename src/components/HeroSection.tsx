@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Linkedin, Mail } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -28,17 +29,21 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex gap-6 justify-center"
         >
           <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="btn-primary-gradient"
+            href="https://www.linkedin.com/in/aneesh-jonnala"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-primary transition-colors"
           >
-            Contact Me
+            <Linkedin className="w-8 h-8" />
+          </a>
+          <a
+            href="mailto:aneeshjonnala1337@gmail.com"
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Mail className="w-8 h-8" />
           </a>
         </motion.div>
       </div>

@@ -9,14 +9,11 @@ interface Track {
 
 const fallbackTracks: Track[] = [
   { trackName: "white noise.", previewUrl: "" },
-  { trackName: "wrong faces.", previewUrl: "" },
-  { trackName: "have to.", previewUrl: "" },
   { trackName: "butterflies.", previewUrl: "" },
   { trackName: "other side.", previewUrl: "" },
   { trackName: "strangers.", previewUrl: "" },
   { trackName: "world is yours.", previewUrl: "" },
   { trackName: "four seasons.", previewUrl: "" },
-  { trackName: "pure fantasy.", previewUrl: "" },
   { trackName: "vanilla sky.", previewUrl: "" },
 ];
 
@@ -34,12 +31,14 @@ const MusicDisc = () => {
       .then((res) => res.json())
       .then((wrapper) => {
         const data = JSON.parse(wrapper.contents);
+        const excludedTracks = ["wrong faces", "have to", "pure fantasy"];
         const filtered = data.results
           ?.filter((r: any) => r.collectionName?.toLowerCase().includes("icon"))
+          .filter((r: any) => !excludedTracks.some(excluded => r.trackName?.toLowerCase().includes(excluded)))
           .map((r: any) => ({ trackName: r.trackName, previewUrl: r.previewUrl }));
         if (filtered && filtered.length > 0) setTracks(filtered);
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   const playRandom = useCallback(() => {
@@ -78,11 +77,10 @@ const MusicDisc = () => {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {/* Now Playing toast */}
       <div
-        className={`pointer-events-none mb-1 rounded-lg border border-border/50 bg-background/80 px-3 py-1.5 text-xs text-foreground backdrop-blur-md transition-all duration-300 ${
-          showNowPlaying && currentTrack
-            ? "translate-y-0 opacity-100"
-            : "translate-y-2 opacity-0"
-        }`}
+        className={`pointer-events-none mb-1 rounded-lg border border-border/50 bg-background/80 px-3 py-1.5 text-xs text-foreground backdrop-blur-md transition-all duration-300 ${showNowPlaying && currentTrack
+          ? "translate-y-0 opacity-100"
+          : "translate-y-2 opacity-0"
+          }`}
       >
         Now Playing: {currentTrack}
       </div>
@@ -97,17 +95,15 @@ const MusicDisc = () => {
           >
             {/* Glow */}
             <div
-              className={`absolute inset-0 rounded-full transition-all duration-500 ${
-                isPlaying
-                  ? "shadow-[0_0_20px_hsl(217_91%_60%/0.4),0_0_40px_hsl(217_91%_60%/0.15)] animate-pulse"
-                  : ""
-              }`}
+              className={`absolute inset-0 rounded-full transition-all duration-500 ${isPlaying
+                ? "shadow-[0_0_20px_hsl(217_91%_60%/0.4),0_0_40px_hsl(217_91%_60%/0.15)] animate-pulse"
+                : ""
+                }`}
             />
             {/* Vinyl body */}
             <div
-              className={`absolute inset-0 rounded-full border border-primary/30 transition-all duration-300 group-hover:border-primary/60 ${
-                isPlaying ? "animate-[spin_3s_linear_infinite]" : ""
-              }`}
+              className={`absolute inset-0 rounded-full border border-primary/30 transition-all duration-300 group-hover:border-primary/60 ${isPlaying ? "animate-[spin_3s_linear_infinite]" : ""
+                }`}
               style={{
                 background:
                   "radial-gradient(circle, hsl(0 0% 18%) 0%, hsl(0 0% 8%) 40%, hsl(0 0% 4%) 100%)",
