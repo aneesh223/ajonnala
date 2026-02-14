@@ -145,6 +145,12 @@ export class PulsationManager {
         originalSize: number,
         currentTime: number
     ): void {
+        // FIX 1: Prevent "Teleporting" by ignoring beats for particles already animating.
+        // If we restart, the size snaps from Current -> Start instantly.
+        if (this.pulsations.has(particleId)) {
+            return;
+        }
+
         // Clamp beat strength to valid range
         const clampedBeatStrength = Math.max(0, Math.min(1, beatStrength));
 
@@ -158,26 +164,23 @@ export class PulsationManager {
 
         // Check if we've reached the concurrent pulsation limit
         if (this.pulsations.size >= this.maxConcurrentPulsations) {
-            // If particle is already pulsating, allow restart (overlapping pulsation)
-            if (!this.pulsations.has(particleId)) {
-                // Find and remove the oldest pulsation
-                let oldestTime = Infinity;
-                let oldestId = '';
+            // Find and remove the oldest pulsation to make room
+            let oldestTime = Infinity;
+            let oldestId = '';
 
-                for (const [id, state] of this.pulsations.entries()) {
-                    if (state.startTime < oldestTime) {
-                        oldestTime = state.startTime;
-                        oldestId = id;
-                    }
+            for (const [id, state] of this.pulsations.entries()) {
+                if (state.startTime < oldestTime) {
+                    oldestTime = state.startTime;
+                    oldestId = id;
                 }
+            }
 
-                if (oldestId) {
-                    this.pulsations.delete(oldestId);
-                }
+            if (oldestId) {
+                this.pulsations.delete(oldestId);
             }
         }
 
-        // Create or update pulsation state
+        // Create pulsation state
         const pulsationState: PulsationState = {
             particleId,
             startTime: currentTime,
