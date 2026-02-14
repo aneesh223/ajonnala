@@ -132,9 +132,11 @@ const StarfieldBackground = () => {
             if (!particle._originalSize) {
               particle._originalSize = particle.size?.value || 1;
             }
-            // Apply scale
+            // Apply scale - only modify size, not position
             if (particle.size) {
-              particle.size.value = particle._originalSize * scale;
+              const newSize = particle._originalSize * scale;
+              console.log(`Particle ${particle.id}: size ${particle.size.value.toFixed(2)} -> ${newSize.toFixed(2)}, scale ${scale.toFixed(2)}`);
+              particle.size.value = newSize;
             }
           } else if (particle._originalSize && particle.size) {
             // Reset to original size if not pulsating
