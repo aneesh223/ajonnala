@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
 const techStack = ["Python", "PyTorch", "Pandas", "Git"];
-const projectUrl = "https://github.com/aneesh223/orthrus";
+const projectUrl = "https://github.com/aneesh223/orthrusquant";
 
 const FeaturedProject = () => {
   return (
