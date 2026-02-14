@@ -251,8 +251,8 @@ export class PulsationManager {
     /**
      * Calculates the current scale multiplier based on progress through the pulsation.
      * 
-     * Uses ease-out cubic easing (1 - (1 - x)^3) for smooth, natural-looking decay
-     * from peak scale back to normal size.
+     * Uses a sine wave for smooth growth (attack) and decay back to normal size.
+     * The sine wave creates a natural pulsation that grows from 1.0 to peak and back to 1.0.
      * 
      * @param progress - Progress through pulsation (0-1, where 0=start, 1=end)
      * @param peakScale - Peak scale multiplier (1.5-2.0)
@@ -261,14 +261,14 @@ export class PulsationManager {
      * @private
      */
     private calculateScale(progress: number, peakScale: number): number {
-        // Ease-out cubic: 1 - (1 - x)^3
-        // This creates a smooth decay from peak back to 1.0
-        const eased = 1 - Math.pow(1 - progress, 3);
+        // Use a Sine wave for smooth grow (attack) and shrink (decay)
+        // Math.sin(0) = 0 (Start at normal size)
+        // Math.sin(PI/2) = 1 (Peak size at 50% duration)
+        // Math.sin(PI) = 0 (End at normal size)
+        const sineValue = Math.sin(progress * Math.PI);
 
-        // Interpolate from peakScale to 1.0
-        // At progress=0: scale = peakScale
-        // At progress=1: scale = 1.0
-        const scale = peakScale - (eased * (peakScale - 1.0));
+        // Interpolate: 1.0 + (difference * sineCurve)
+        const scale = 1.0 + ((peakScale - 1.0) * sineValue);
 
         return scale;
     }
