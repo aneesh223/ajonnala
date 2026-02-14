@@ -32,7 +32,55 @@ const StarfieldBackground = () => {
   useEffect(() => {
     // Only subscribe if Web Audio API is supported
     if (!isWebAudioSupported) {
-      return;
+      // If Web Audio is not supported, listen for fake beats instead
+      const handleFakeBeat = ((event: CustomEvent) => {
+        const strength = event.detail.strength;
+        setBeatStrength(strength);
+
+        // Get particles from container
+        if (!containerRef.current) return;
+
+        const container = containerRef.current;
+        const particles = container.particles?.array || [];
+
+        if (particles.length === 0) return;
+
+        // Convert particles to format expected by selectStars
+        const particleData = particles.map((p: any) => ({
+          id: p.id,
+          size: p.size?.value || 1,
+        }));
+
+        // Calculate selection percentages based on configuration
+        const minPercent = config.selectionPercentage * 0.5;
+        const maxPercent = config.selectionPercentage * 1.5;
+
+        // Use selectStars with custom configuration
+        const selectedParticles = selectStars(particleData, strength, {
+          minSelectionPercent: minPercent,
+          maxSelectionPercent: maxPercent,
+          sizeWeightExponent: 2,
+        });
+
+        // Start pulsations via PulsationManager with configured intensity
+        const currentTime = performance.now();
+        selectedParticles.forEach((particle) => {
+          const adjustedStrength = strength * config.pulsationIntensity;
+
+          pulsationManagerRef.current?.startPulsation(
+            particle.id,
+            adjustedStrength,
+            particle.size,
+            currentTime
+          );
+        });
+      }) as EventListener;
+
+      window.addEventListener('musicbeat', handleFakeBeat);
+
+      return () => {
+        window.removeEventListener('musicbeat', handleFakeBeat);
+      };
     }
 
     const unsubscribe = onBeat((strength) => {
