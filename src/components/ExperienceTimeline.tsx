@@ -4,6 +4,7 @@ const experiences = [
   {
     role: "Open Source Contributor",
     org: "PyTorch",
+    url: "https://github.com/pytorch/rl",
     location: "Remote",
     description:
       "Architectured 'FinancialRegimeEnv', a custom trading environment for training RL agents.",
@@ -11,6 +12,7 @@ const experiences = [
   {
     role: "Co-Founder",
     org: "ISO and Company Media",
+    url: "https://isoandco.mypixieset.com",
     location: "",
     description:
       "A photography startup specializing in portraits, events, and sports media.",
@@ -18,6 +20,7 @@ const experiences = [
   {
     role: "Code Sensei",
     org: "Code Ninjas",
+    url: "",
     location: "",
     description:
       "Teaching STEM and coding fundamentals to students ages 5-14.",
@@ -25,6 +28,7 @@ const experiences = [
   {
     role: "Chapter President",
     org: "Athletes to Aid",
+    url: "",
     location: "",
     description:
       "Helped raise over $12,000+ serving underserved Columbus athletes.",
@@ -61,9 +65,15 @@ const ExperienceTimeline = () => {
                     <h3 className="text-foreground font-semibold">
                       {exp.role}
                     </h3>
-                    <span className="text-primary font-mono text-sm">
-                      {exp.org}
-                    </span>
+                    {exp.url ? (
+                      <a href={exp.url} target="_blank" rel="noopener noreferrer" className="text-primary font-mono text-sm hover:underline underline-offset-4 hover:text-accent transition-colors duration-200">
+                        {exp.org}
+                      </a>
+                    ) : (
+                      <span className="text-primary font-mono text-sm">
+                        {exp.org}
+                      </span>
+                    )}
                     {exp.location && (
                       <span className="text-muted-foreground text-xs font-mono">
                         ({exp.location})

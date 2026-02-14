@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 
 const techStack = ["Python", "PyTorch", "Pandas", "Git"];
+const projectUrl = "https://github.com/aneesh223/orthrusquant";
 
 const FeaturedProject = () => {
   return (
@@ -18,9 +19,9 @@ const FeaturedProject = () => {
           <div className="glass-card-hover p-8 md:p-12">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
               <div>
-                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                <a href={projectUrl} target="_blank" rel="noopener noreferrer" className="text-2xl md:text-3xl font-bold text-foreground mb-2 inline-block hover:text-primary transition-colors duration-200 hover:underline underline-offset-4">
                   Orthrus
-                </h3>
+                </a>
                 <p className="text-muted-foreground text-sm font-mono">
                   Autonomous Quant Trading Engine
                 </p>
