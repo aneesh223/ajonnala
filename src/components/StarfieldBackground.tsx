@@ -116,6 +116,12 @@ const StarfieldBackground = () => {
         const container = containerRef.current;
         const particles = container.particles?.array || [];
 
+        // Debug: log pulsation info
+        if (scaleMultipliers.size > 0) {
+          const firstScale = Array.from(scaleMultipliers.values())[0];
+          console.log(`Pulsating ${scaleMultipliers.size} stars, scale example: ${firstScale.toFixed(2)}`);
+        }
+
         // Batch particle updates to minimize overhead
         for (let i = 0; i < particles.length; i++) {
           const particle = particles[i];
@@ -173,11 +179,11 @@ const StarfieldBackground = () => {
           animation: { enable: true, speed: 0.5, sync: false },
         },
         size: {
-          value: { min: 0.5, max: 2.5 },
+          value: { min: 1.5, max: 4.5 },
         },
         move: {
           enable: true,
-          speed: 0.3,
+          speed: 0.1,
           direction: "none" as const,
           random: true,
           straight: false,
