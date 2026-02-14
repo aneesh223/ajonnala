@@ -49,20 +49,30 @@ const MusicDisc = () => {
   useEffect(() => {
     if (!audioRef.current) return;
 
+    let setupDone = false;
     const setupAudioContext = () => {
-      if (!audioContextRef.current && audioRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const source = audioContextRef.current.createMediaElementSource(audioRef.current);
-        analyserRef.current = audioContextRef.current.createAnalyser();
-        analyserRef.current.fftSize = 256;
-        source.connect(analyserRef.current);
-        analyserRef.current.connect(audioContextRef.current.destination);
+      if (setupDone || !audioRef.current) return;
+
+      try {
+        if (!audioContextRef.current) {
+          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const source = audioContextRef.current.createMediaElementSource(audioRef.current);
+          analyserRef.current = audioContextRef.current.createAnalyser();
+          analyserRef.current.fftSize = 256;
+          source.connect(analyserRef.current);
+          analyserRef.current.connect(audioContextRef.current.destination);
+          setupDone = true;
+        }
+      } catch (error) {
+        console.error('Audio context setup failed:', error);
       }
     };
 
-    audioRef.current.addEventListener('play', setupAudioContext);
+    const audioElement = audioRef.current;
+    audioElement.addEventListener('play', setupAudioContext, { once: true });
+
     return () => {
-      audioRef.current?.removeEventListener('play', setupAudioContext);
+      audioElement.removeEventListener('play', setupAudioContext);
     };
   }, []);
 
@@ -102,7 +112,10 @@ const MusicDisc = () => {
     if (!track.previewUrl || !audioRef.current) return;
     audioRef.current.src = track.previewUrl;
     audioRef.current.volume = 0.2;
-    audioRef.current.play();
+    audioRef.current.play().catch((error) => {
+      console.error('Playback failed:', error);
+      setIsPlaying(false);
+    });
     setCurrentTrack(track.trackName);
     setIsPlaying(true);
     setShowNowPlaying(true);
@@ -117,7 +130,10 @@ const MusicDisc = () => {
       setIsPlaying(false);
     } else {
       if (audioRef.current.src && audioRef.current.currentTime > 0) {
-        audioRef.current.play();
+        audioRef.current.play().catch((error) => {
+          console.error('Playback failed:', error);
+          setIsPlaying(false);
+        });
         setIsPlaying(true);
       } else {
         playRandom();

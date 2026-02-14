@@ -41,17 +41,24 @@ const StarfieldBackground = () => {
 
     // Pulsate selected stars
     selected.forEach((particle) => {
-      const originalSize = typeof particle.size.value === 'number' ? particle.size.value : 1;
+      // Store original values if not already stored
+      if (!(particle as any)._originalSize) {
+        (particle as any)._originalSize = typeof particle.size.value === 'number' ? particle.size.value : 1;
+        (particle as any)._originalOpacity = particle.opacity.value || 0.5;
+      }
+
+      const originalSize = (particle as any)._originalSize;
+      const originalOpacity = (particle as any)._originalOpacity;
       const pulseSize = originalSize * (1 + beatIntensity * 1.5);
 
       particle.size.value = pulseSize;
-      particle.opacity.value = Math.min((particle.opacity.value || 0.5) + beatIntensity * 0.5, 1);
+      particle.opacity.value = Math.min(originalOpacity + beatIntensity * 0.4, 1);
 
       // Reset after animation
       setTimeout(() => {
         particle.size.value = originalSize;
-        particle.opacity.value = Math.max((particle.opacity.value || 0.5) - beatIntensity * 0.5, 0.1);
-      }, 100);
+        particle.opacity.value = originalOpacity;
+      }, 150);
     });
   }, [beatIntensity, container]);
 
