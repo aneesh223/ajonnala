@@ -130,9 +130,21 @@ const MusicDisc = () => {
       setError("No tracks available");
       return;
     }
-    const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+
+    // If only one track, play it
+    if (tracks.length === 1) {
+      playTrack(tracks[0]);
+      return;
+    }
+
+    // Filter out the current track to avoid repeats
+    const availableTracks = currentTrack
+      ? tracks.filter(t => t.previewUrl !== currentTrack.previewUrl)
+      : tracks;
+
+    const randomTrack = availableTracks[Math.floor(Math.random() * availableTracks.length)];
     playTrack(randomTrack);
-  }, [tracks, playTrack]);
+  }, [tracks, playTrack, currentTrack]);
 
   const toggle = () => {
     if (!audioRef.current) return;
