@@ -90,7 +90,6 @@ const StarfieldBackground = () => {
 
     // Always listen for fake beats (from MusicDisc)
     const handleFakeBeat = ((event: CustomEvent) => {
-      console.log('StarfieldBackground received fake beat:', event.detail.strength);
       processBeat(event.detail.strength);
     }) as EventListener;
 
@@ -136,12 +135,7 @@ const StarfieldBackground = () => {
           container._particles?.array ||
           [];
 
-        // Debug: log pulsation info
-        if (scaleMultipliers.size > 0) {
-          const firstScale = Array.from(scaleMultipliers.values())[0];
-          console.log(`Pulsating ${scaleMultipliers.size} stars, scale example: ${firstScale.toFixed(2)}, particles: ${particles.length}`);
-        }
-
+        // Debug: log pulsation info (removed for performance)
         // Batch particle updates to minimize overhead
         for (let i = 0; i < particles.length; i++) {
           const particle = particles[i];
@@ -154,9 +148,7 @@ const StarfieldBackground = () => {
             }
             // Apply scale - only modify size, not position
             if (particle.size) {
-              const newSize = particle._originalSize * scale;
-              console.log(`Particle ${particle.id}: size ${particle.size.value.toFixed(2)} -> ${newSize.toFixed(2)}, scale ${scale.toFixed(2)}`);
-              particle.size.value = newSize;
+              particle.size.value = particle._originalSize * scale;
             }
           } else if (particle._originalSize && particle.size) {
             // Reset to original size if not pulsating
