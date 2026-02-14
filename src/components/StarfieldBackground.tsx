@@ -35,12 +35,20 @@ const StarfieldBackground = () => {
       setBeatStrength(strength);
 
       // Get particles from container
-      if (!containerRef.current) return;
+      if (!containerRef.current) {
+        console.log('processBeat: No container ref');
+        return;
+      }
 
       const container = containerRef.current;
       const particles = container.particles?.array || [];
 
-      if (particles.length === 0) return;
+      if (particles.length === 0) {
+        console.log('processBeat: No particles found');
+        return;
+      }
+
+      console.log(`processBeat: Processing ${particles.length} particles with strength ${strength.toFixed(2)}`);
 
       // Convert particles to format expected by selectStars
       const particleData = particles.map((p: any) => ({
@@ -58,6 +66,8 @@ const StarfieldBackground = () => {
         maxSelectionPercent: maxPercent,
         sizeWeightExponent: 2,
       });
+
+      console.log(`processBeat: Selected ${selectedParticles.length} particles to pulsate`);
 
       // Start pulsations via PulsationManager with configured intensity
       const currentTime = performance.now();
