@@ -25,9 +25,6 @@ const MusicDisc = () => {
   const [showNowPlaying, setShowNowPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const nowPlayingTimeout = useRef<ReturnType<typeof setTimeout>>();
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const { triggerBeat } = useAudio();
 
   useEffect(() => {
     const url = encodeURIComponent("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song");
@@ -45,77 +42,12 @@ const MusicDisc = () => {
       .catch(() => { });
   }, []);
 
-  // Setup audio analysis for beat detection
-  useEffect(() => {
-    if (!audioRef.current) return;
-
-    let setupDone = false;
-    const setupAudioContext = () => {
-      if (setupDone || !audioRef.current) return;
-
-      try {
-        if (!audioContextRef.current) {
-          audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-          const source = audioContextRef.current.createMediaElementSource(audioRef.current);
-          analyserRef.current = audioContextRef.current.createAnalyser();
-          analyserRef.current.fftSize = 256;
-          source.connect(analyserRef.current);
-          analyserRef.current.connect(audioContextRef.current.destination);
-          setupDone = true;
-        }
-      } catch (error) {
-        console.error('Audio context setup failed:', error);
-      }
-    };
-
-    const audioElement = audioRef.current;
-    audioElement.addEventListener('play', setupAudioContext, { once: true });
-
-    return () => {
-      audioElement.removeEventListener('play', setupAudioContext);
-    };
-  }, []);
-
-  // Beat detection loop
-  useEffect(() => {
-    if (!isPlaying || !analyserRef.current) return;
-
-    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-    let lastBeatTime = 0;
-    const minTimeBetweenBeats = 200; // ms
-
-    const detectBeat = () => {
-      if (!analyserRef.current || !isPlaying) return;
-
-      analyserRef.current.getByteFrequencyData(dataArray);
-
-      // Focus on bass frequencies (0-100Hz range)
-      const bassRange = dataArray.slice(0, 8);
-      const bassAvg = bassRange.reduce((a, b) => a + b, 0) / bassRange.length;
-
-      const now = Date.now();
-      if (bassAvg > 180 && now - lastBeatTime > minTimeBetweenBeats) {
-        const intensity = Math.min(bassAvg / 255, 1);
-        triggerBeat(intensity);
-        lastBeatTime = now;
-      }
-
-      requestAnimationFrame(detectBeat);
-    };
-
-    const animationId = requestAnimationFrame(detectBeat);
-    return () => cancelAnimationFrame(animationId);
-  }, [isPlaying, triggerBeat]);
-
   const playRandom = useCallback(() => {
     const track = tracks[Math.floor(Math.random() * tracks.length)];
     if (!track.previewUrl || !audioRef.current) return;
     audioRef.current.src = track.previewUrl;
     audioRef.current.volume = 0.2;
-    audioRef.current.play().catch((error) => {
-      console.error('Playback failed:', error);
-      setIsPlaying(false);
-    });
+    audioRef.current.play();
     setCurrentTrack(track.trackName);
     setIsPlaying(true);
     setShowNowPlaying(true);
@@ -130,10 +62,7 @@ const MusicDisc = () => {
       setIsPlaying(false);
     } else {
       if (audioRef.current.src && audioRef.current.currentTime > 0) {
-        audioRef.current.play().catch((error) => {
-          console.error('Playback failed:', error);
-          setIsPlaying(false);
-        });
+        audioRef.current.play();
         setIsPlaying(true);
       } else {
         playRandom();

@@ -1,13 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import type { ISourceOptions, Container } from "@tsparticles/engine";
-import { useAudio } from "@/contexts/AudioContext";
+import type { ISourceOptions } from "@tsparticles/engine";
 
 const StarfieldBackground = () => {
   const [init, setInit] = useState(false);
-  const [container, setContainer] = useState<Container | undefined>();
-  const { beatIntensity } = useAudio();
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -16,51 +13,6 @@ const StarfieldBackground = () => {
       setInit(true);
     });
   }, []);
-
-  // React to beats by pulsating random stars
-  useEffect(() => {
-    if (!container || beatIntensity === 0) return;
-
-    const particles = container.particles.array;
-    const numToPulsate = Math.floor(particles.length * 0.15); // Pulsate 15% of stars
-
-    // Sort by size (bigger stars have higher chance)
-    const sortedBySize = [...particles].sort((a, b) => {
-      const sizeA = typeof a.size.value === 'number' ? a.size.value : 1;
-      const sizeB = typeof b.size.value === 'number' ? b.size.value : 1;
-      return sizeB - sizeA;
-    });
-
-    // Weighted random selection (bigger stars more likely)
-    const selected: typeof particles = [];
-    for (let i = 0; i < numToPulsate; i++) {
-      const weight = Math.random() * Math.random(); // Bias toward 0
-      const index = Math.floor(weight * sortedBySize.length);
-      selected.push(sortedBySize[index]);
-    }
-
-    // Pulsate selected stars
-    selected.forEach((particle) => {
-      // Store original values if not already stored
-      if (!(particle as any)._originalSize) {
-        (particle as any)._originalSize = typeof particle.size.value === 'number' ? particle.size.value : 1;
-        (particle as any)._originalOpacity = particle.opacity.value || 0.5;
-      }
-
-      const originalSize = (particle as any)._originalSize;
-      const originalOpacity = (particle as any)._originalOpacity;
-      const pulseSize = originalSize * (1 + beatIntensity * 1.5);
-
-      particle.size.value = pulseSize;
-      particle.opacity.value = Math.min(originalOpacity + beatIntensity * 0.4, 1);
-
-      // Reset after animation
-      setTimeout(() => {
-        particle.size.value = originalSize;
-        particle.opacity.value = originalOpacity;
-      }, 150);
-    });
-  }, [beatIntensity, container]);
 
   const options: ISourceOptions = useMemo(
     () => ({
@@ -141,9 +93,6 @@ const StarfieldBackground = () => {
       id="starfield"
       className="fixed inset-0 z-0"
       options={options}
-      particlesLoaded={async (container) => {
-        setContainer(container);
-      }}
     />
   );
 };
