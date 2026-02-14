@@ -124,7 +124,9 @@
 
   .btn-primary-gradient {
     @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 text-primary-foreground;
-    background: var(--gradient-primary);
+    background: linear-gradient(90deg, #3B82F6, #EE4C2C, #3B82F6);
+    background-size: 200% auto;
+    animation: gradient-x 3s linear infinite;
   }
 
   .btn-primary-gradient:hover {
