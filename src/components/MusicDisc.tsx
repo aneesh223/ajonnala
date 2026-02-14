@@ -29,9 +29,11 @@ const MusicDisc = () => {
   const nowPlayingTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    fetch("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song")
+    const url = encodeURIComponent("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song");
+    fetch(`https://api.allorigins.win/get?url=${url}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((wrapper) => {
+        const data = JSON.parse(wrapper.contents);
         const filtered = data.results
           ?.filter((r: any) => r.collectionName?.toLowerCase().includes("icon"))
           .map((r: any) => ({ trackName: r.trackName, previewUrl: r.previewUrl }));
