@@ -10,77 +10,63 @@ interface Track {
   bpm: number;
 }
 
-// BPM mapping for Brent Faiyaz - Icon tracks
-const TRACK_BPM_MAP: Record<string, number> = {
-  "white noise": 101,
-  "butterflies": 92,
-  "other side": 107,
-  "strangers": 148,
-  "world is yours": 142,
-  "four seasons": 93,
-  "vanilla sky": 91,
-};
+// Hardcoded tracks from Brent Faiyaz - Icon album (no API needed, no CORS issues)
+const ICON_TRACKS: Track[] = [
+  {
+    title: "white noise.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3e/78/73/3e787372-33fb-c60e-e22c-86cbb21ba466/mzaf_4466674677205288542.plus.aac.p.m4a",
+    bpm: 101,
+  },
+  {
+    title: "butterflies.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f3/32/83/f332834c-3754-e745-128b-9cd9db2c8aae/mzaf_9493915808907770813.plus.aac.p.m4a",
+    bpm: 92,
+  },
+  {
+    title: "other side.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/c8/64/96/c8649664-d968-ea0c-9fbe-58d79a3b9513/mzaf_113675100476796328.plus.aac.p.m4a",
+    bpm: 107,
+  },
+  {
+    title: "strangers.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/11/e2/f6/11e2f624-85cd-7084-0e33-19515ab29d55/mzaf_15198436625456586556.plus.aac.p.m4a",
+    bpm: 148,
+  },
+  {
+    title: "world is yours.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f7/fa/47/f7fa472a-86da-22ec-097b-40016e38a67a/mzaf_1809133547480313329.plus.aac.p.m4a",
+    bpm: 142,
+  },
+  {
+    title: "four seasons.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/5f/03/a5/5f03a580-1450-68de-5952-8a3c49f0b2bf/mzaf_3121078119940927117.plus.aac.p.m4a",
+    bpm: 93,
+  },
+  {
+    title: "vanilla sky.",
+    artist: "Brent Faiyaz",
+    previewUrl: "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c9/1a/de/c91ade0e-03e5-ddbc-1637-af6d33943c53/mzaf_1024449120911146213.plus.aac.p.m4a",
+    bpm: 91,
+  },
+];
 
 const MusicDisc = () => {
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [tracks] = useState<Track[]>(ICON_TRACKS); // Use hardcoded tracks, no API calls
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [showNowPlaying, setShowNowPlaying] = useState(false);
   const [error, setError] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
   const nowPlayingTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   // Use fake beat detection hook
   const fakeBeat = useFakeBeatDetection();
-
-  // Fetch tracks from iTunes API
-  useEffect(() => {
-    fetch("https://itunes.apple.com/search?term=Brent+Faiyaz+Icon&entity=song&limit=25")
-      .then((res) => {
-        if (!res.ok) throw new Error(`API error: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        const excludedTracks = ["wrong faces", "have to", "pure fantasy"];
-        const filtered = data.results
-          ?.filter((r: any) => r.collectionName?.toLowerCase().includes("icon"))
-          .filter((r: any) => !excludedTracks.some(excluded => r.trackName?.toLowerCase().includes(excluded)))
-          .filter((r: any) => r.previewUrl)
-          .map((r: any) => {
-            const trackNameLower = r.trackName.toLowerCase();
-            // Find BPM from our map
-            let bpm = 100; // Default fallback
-            for (const [name, trackBpm] of Object.entries(TRACK_BPM_MAP)) {
-              if (trackNameLower.includes(name)) {
-                bpm = trackBpm;
-                break;
-              }
-            }
-
-            return {
-              title: r.trackName,
-              artist: r.artistName,
-              previewUrl: r.previewUrl,
-              bpm,
-            };
-          });
-
-        if (filtered && filtered.length > 0) {
-          setTracks(filtered);
-          setError("");
-          console.log("Loaded tracks with BPMs:", filtered);
-        } else {
-          setError("No tracks found");
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch tracks:", err);
-        setError("Failed to load music");
-        setIsLoading(false);
-      });
-  }, []);
 
   // Expose fake beat events globally for StarfieldBackground to consume
   useEffect(() => {
@@ -189,12 +175,6 @@ const MusicDisc = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-      {isLoading && (
-        <div className="mb-1 rounded-lg border border-blue-500/50 bg-blue-500/10 px-3 py-1.5 text-xs text-blue-400 backdrop-blur-md">
-          Loading tracks...
-        </div>
-      )}
-
       {error && (
         <div className="mb-1 max-w-xs rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-1.5 text-xs text-red-400 backdrop-blur-md">
           {error}
@@ -236,8 +216,7 @@ const MusicDisc = () => {
             <button
               onClick={toggle}
               aria-label={isPlaying ? "Pause music" : "Play music"}
-              disabled={isLoading}
-              className="group relative h-16 w-16 cursor-pointer rounded-full focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative h-16 w-16 cursor-pointer rounded-full focus:outline-none"
             >
               <div className={`absolute inset-0 rounded-full transition-all duration-500 ${isPlaying ? "shadow-[0_0_20px_hsl(217_91%_60%/0.4),0_0_40px_hsl(217_91%_60%/0.15)] animate-pulse" : ""}`} />
               <div
