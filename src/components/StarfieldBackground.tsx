@@ -11,6 +11,8 @@ const StarfieldBackground = () => {
   const [beatStrength, setBeatStrength] = useState<number>(0);
   const containerRef = useRef<any>(null);
   const pulsationManagerRef = useRef<PulsationManager | null>(null);
+  // Track particles that need smooth decay back to original size
+  const decayingParticlesRef = useRef<Map<string, { originalSize: number }>>(new Map());
 
   // Subscribe to audio analysis context
   const { onBeat, isWebAudioSupported, config } = useAudioAnalysis();
@@ -131,32 +133,51 @@ const StarfieldBackground = () => {
         container._particles?.array ||
         [];
 
+      // Build a lookup for fast access by particle id
+      const particleMap = new Map<string, any>();
       for (let i = 0; i < particles.length; i++) {
-        const particle = particles[i];
-        if (!particle.size) continue;
+        particleMap.set(particles[i].id, particles[i]);
+      }
 
-        const targetScale = scaleMultipliers.get(particle.id);
+      // 1. Apply active pulsation scales (only touch pulsating particles)
+      for (const [particleId, scale] of scaleMultipliers.entries()) {
+        const particle = particleMap.get(particleId);
+        if (!particle?.size) continue;
 
-        if (targetScale !== undefined) {
-          // Capture original size on first pulsation
-          if (!particle._originalSize) {
-            particle._originalSize = particle.size.value;
-          }
-          particle.size.value = particle._originalSize * targetScale;
-        } else if (particle._originalSize) {
-          // Lerp back to original size to prevent snapping
-          const current = particle.size.value;
-          const target = particle._originalSize;
-          const diff = Math.abs(current - target);
+        // Capture original size on first pulsation
+        if (!particle._originalSize) {
+          particle._originalSize = particle.size.value;
+        }
+        particle.size.value = particle._originalSize * scale;
 
-          if (diff < 0.01) {
-            // Close enough — snap and clear
-            particle.size.value = target;
-            delete particle._originalSize;
-          } else {
-            // Smooth interpolation (~0.15 per frame at 60fps)
-            particle.size.value = current + (target - current) * 0.15;
-          }
+        // If scale is 1.0 (completed), move to decay tracking
+        if (scale === 1.0) {
+          decayingParticlesRef.current.set(particleId, { originalSize: particle._originalSize });
+        }
+      }
+
+      // 2. Smooth decay for particles that finished pulsating
+      const decaying = decayingParticlesRef.current;
+      for (const [particleId, data] of decaying.entries()) {
+        // Skip if still actively pulsating
+        if (scaleMultipliers.has(particleId)) continue;
+
+        const particle = particleMap.get(particleId);
+        if (!particle?.size) {
+          decaying.delete(particleId);
+          continue;
+        }
+
+        const current = particle.size.value;
+        const target = data.originalSize;
+        const diff = Math.abs(current - target);
+
+        if (diff < 0.01) {
+          particle.size.value = target;
+          delete particle._originalSize;
+          decaying.delete(particleId);
+        } else {
+          particle.size.value = current + (target - current) * 0.15;
         }
       }
 
