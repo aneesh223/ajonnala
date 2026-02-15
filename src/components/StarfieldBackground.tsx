@@ -8,9 +8,10 @@ import { PulsationManager } from "../lib/pulsationManager";
 
 const StarfieldBackground = () => {
   const [init, setInit] = useState(false);
-  const [beatStrength, setBeatStrength] = useState<number>(0);
   const containerRef = useRef<any>(null);
   const pulsationManagerRef = useRef<PulsationManager | null>(null);
+  // Track particles that need smooth decay back to original size
+  const decayingParticlesRef = useRef<Map<string, { originalSize: number }>>(new Map());
 
   // Subscribe to audio analysis context
   const { onBeat, isWebAudioSupported, config } = useAudioAnalysis();
@@ -32,7 +33,6 @@ const StarfieldBackground = () => {
   useEffect(() => {
     // Handler for processing beats (used by both real and fake detection)
     const processBeat = (strength: number) => {
-      setBeatStrength(strength);
 
       // Get particles from container
       if (!containerRef.current) {
@@ -125,40 +125,62 @@ const StarfieldBackground = () => {
       const currentTime = performance.now();
       const scaleMultipliers = pulsationManagerRef.current.updatePulsations(currentTime);
 
-      // Only update particles if there are active pulsations
-      if (scaleMultipliers.size > 0) {
-        const container = containerRef.current;
+      const container = containerRef.current;
+      const particles = container.particles?.array ||
+        container.particles?._array ||
+        container._particles?.array ||
+        [];
 
-        // Try multiple ways to access particles (tsparticles API varies)
-        const particles = container.particles?.array ||
-          container.particles?._array ||
-          container._particles?.array ||
-          [];
+      // Build a lookup for fast access by particle id
+      const particleMap = new Map<string, any>();
+      for (let i = 0; i < particles.length; i++) {
+        particleMap.set(particles[i].id, particles[i]);
+      }
 
-        // Debug: log pulsation info (removed for performance)
-        // Batch particle updates to minimize overhead
-        for (let i = 0; i < particles.length; i++) {
-          const particle = particles[i];
-          const scale = scaleMultipliers.get(particle.id);
+      // 1. Apply active pulsation scales (only touch pulsating particles)
+      for (const [particleId, scale] of scaleMultipliers.entries()) {
+        const particle = particleMap.get(particleId);
+        if (!particle?.size) continue;
 
-          if (scale !== undefined) {
-            // Store original size if not already stored
-            if (!particle._originalSize) {
-              particle._originalSize = particle.size?.value || 1;
-            }
-            // Apply scale - only modify size, not position
-            if (particle.size) {
-              particle.size.value = particle._originalSize * scale;
-            }
-          } else if (particle._originalSize && particle.size) {
-            // Reset to original size if not pulsating
-            particle.size.value = particle._originalSize;
-          }
+        // Capture original size on first pulsation
+        if (!particle._originalSize) {
+          particle._originalSize = particle.size.value;
+        }
+        particle.size.value = particle._originalSize * scale;
+
+        // If scale is 1.0 (completed), move to decay tracking
+        if (scale === 1.0) {
+          decayingParticlesRef.current.set(particleId, { originalSize: particle._originalSize });
+        }
+      }
+
+      // 2. Smooth decay for particles that finished pulsating
+      const decaying = decayingParticlesRef.current;
+      for (const [particleId, data] of decaying.entries()) {
+        // Skip if still actively pulsating
+        if (scaleMultipliers.has(particleId)) continue;
+
+        const particle = particleMap.get(particleId);
+        if (!particle?.size) {
+          decaying.delete(particleId);
+          continue;
         }
 
-        // Cleanup completed pulsations
-        pulsationManagerRef.current.cleanup(currentTime);
+        const current = particle.size.value;
+        const target = data.originalSize;
+        const diff = Math.abs(current - target);
+
+        if (diff < 0.01) {
+          particle.size.value = target;
+          delete particle._originalSize;
+          decaying.delete(particleId);
+        } else {
+          particle.size.value = current + (target - current) * 0.15;
+        }
       }
+
+      // Cleanup completed pulsations
+      pulsationManagerRef.current.cleanup(currentTime);
 
       animationFrameId = requestAnimationFrame(updatePulsations);
     };
