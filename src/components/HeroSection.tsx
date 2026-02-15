@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Linkedin, Mail } from "lucide-react";
+import { Linkedin, Mail, Github } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -38,6 +38,14 @@ const HeroSection = () => {
             className="text-muted-foreground hover:text-primary transition-colors"
           >
             <Linkedin className="w-8 h-8" />
+          </a>
+          <a
+            href="https://github.com/aneesh223"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Github className="w-8 h-8" />
           </a>
           <a
             href="mailto:aneeshjonnala1337@gmail.com"
