@@ -235,9 +235,10 @@ export class PulsationManager {
                 continue;
             }
 
-            // Check if pulsation is complete
+            // Check if pulsation is complete — emit final scale 1.0
+            // to prevent snapping from last interpolated value
             if (elapsed >= state.duration) {
-                // Mark for cleanup (will be removed after this update)
+                scaleMultipliers.set(particleId, 1.0);
                 continue;
             }
 
