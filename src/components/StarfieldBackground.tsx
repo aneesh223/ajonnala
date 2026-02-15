@@ -8,7 +8,6 @@ import { PulsationManager } from "../lib/pulsationManager";
 
 const StarfieldBackground = () => {
   const [init, setInit] = useState(false);
-  const [beatStrength, setBeatStrength] = useState<number>(0);
   const containerRef = useRef<any>(null);
   const pulsationManagerRef = useRef<PulsationManager | null>(null);
   // Track particles that need smooth decay back to original size
@@ -34,7 +33,6 @@ const StarfieldBackground = () => {
   useEffect(() => {
     // Handler for processing beats (used by both real and fake detection)
     const processBeat = (strength: number) => {
-      setBeatStrength(strength);
 
       // Get particles from container
       if (!containerRef.current) {
