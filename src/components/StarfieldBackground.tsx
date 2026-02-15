@@ -125,40 +125,43 @@ const StarfieldBackground = () => {
       const currentTime = performance.now();
       const scaleMultipliers = pulsationManagerRef.current.updatePulsations(currentTime);
 
-      // Only update particles if there are active pulsations
-      if (scaleMultipliers.size > 0) {
-        const container = containerRef.current;
+      const container = containerRef.current;
+      const particles = container.particles?.array ||
+        container.particles?._array ||
+        container._particles?.array ||
+        [];
 
-        // Try multiple ways to access particles (tsparticles API varies)
-        const particles = container.particles?.array ||
-          container.particles?._array ||
-          container._particles?.array ||
-          [];
+      for (let i = 0; i < particles.length; i++) {
+        const particle = particles[i];
+        if (!particle.size) continue;
 
-        // Debug: log pulsation info (removed for performance)
-        // Batch particle updates to minimize overhead
-        for (let i = 0; i < particles.length; i++) {
-          const particle = particles[i];
-          const scale = scaleMultipliers.get(particle.id);
+        const targetScale = scaleMultipliers.get(particle.id);
 
-          if (scale !== undefined) {
-            // Store original size if not already stored
-            if (!particle._originalSize) {
-              particle._originalSize = particle.size?.value || 1;
-            }
-            // Apply scale - only modify size, not position
-            if (particle.size) {
-              particle.size.value = particle._originalSize * scale;
-            }
-          } else if (particle._originalSize && particle.size) {
-            // Reset to original size if not pulsating
-            particle.size.value = particle._originalSize;
+        if (targetScale !== undefined) {
+          // Capture original size on first pulsation
+          if (!particle._originalSize) {
+            particle._originalSize = particle.size.value;
+          }
+          particle.size.value = particle._originalSize * targetScale;
+        } else if (particle._originalSize) {
+          // Lerp back to original size to prevent snapping
+          const current = particle.size.value;
+          const target = particle._originalSize;
+          const diff = Math.abs(current - target);
+
+          if (diff < 0.01) {
+            // Close enough — snap and clear
+            particle.size.value = target;
+            delete particle._originalSize;
+          } else {
+            // Smooth interpolation (~0.15 per frame at 60fps)
+            particle.size.value = current + (target - current) * 0.15;
           }
         }
-
-        // Cleanup completed pulsations
-        pulsationManagerRef.current.cleanup(currentTime);
       }
+
+      // Cleanup completed pulsations
+      pulsationManagerRef.current.cleanup(currentTime);
 
       animationFrameId = requestAnimationFrame(updatePulsations);
     };
