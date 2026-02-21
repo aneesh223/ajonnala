@@ -22,7 +22,7 @@ const HeroSection = () => {
         >
           Independent{" "}
           <span className="text-accent font-medium">Machine Learning</span>{" "}
-          R&D Engineer.
+          Developer.
         </motion.p>
 
         <motion.div
