@@ -257,7 +257,7 @@ const StarfieldBackground = () => {
           maxWidth: 768,
           options: {
             particles: {
-              number: { value: 40 },
+              number: { value: 70 },
               links: { enable: false },
             },
             interactivity: {
