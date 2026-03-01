@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Linkedin, Mail, Github } from "lucide-react";
+import { Linkedin, Mail, Github, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -18,12 +19,27 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 font-light"
+          className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-6 font-light"
         >
           Independent{" "}
           <span className="text-accent font-medium">Machine Learning</span>{" "}
           Developer.
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="flex justify-center mb-10"
+        >
+          <Link
+            to="/resume"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-mono text-primary border border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-200"
+          >
+            <FileText className="w-4 h-4" />
+            View Resume
+          </Link>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
