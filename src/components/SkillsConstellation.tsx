@@ -89,7 +89,7 @@ const SkillsConstellation = () => {
           </div>
         </div>
 
-        <h3 className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider mb-6 border-b border-border/30 pb-2">Leadership & Skills</h3>
+        <h3 className="text-xs font-mono text-muted-foreground/60 uppercase tracking-wider mb-6 border-b border-border/30 pb-2">Other</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {leadershipSkills.map((cat, ci) => (
             <CategoryBlock key={cat.label} cat={cat} ci={ci} />
