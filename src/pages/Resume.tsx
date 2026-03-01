@@ -10,13 +10,6 @@ const Resume = () => {
         >
           ← Back
         </a>
-        <a
-          href={resumeUrl}
-          download
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mono text-primary border border-primary/30 hover:bg-primary/10 transition-colors"
-        >
-          Download PDF
-        </a>
       </div>
       <iframe
         src={resumeUrl}
