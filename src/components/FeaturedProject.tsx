@@ -15,7 +15,7 @@ const projects = [
     title: "Subfab Drain Sentry",
     subtitle: "MakeOHI/O 2026 - Intel Challenge",
     description:
-      "Real-time C++ firmware and a 3-tier algorithmic routing matrix on an ARM Cortex-M33 to dynamically classify wastewater for direct reuse, filtration, or disposal.",
+      "Real-time C++ firmware and a 3-tier algorithmic routing matrix on an ARM Cortex-M33 to dynamically classify semiconductor factory wastewater for direct reuse, filtration, or disposal.",
     techStack: ["C++", "GPIO", "ARM Cortex-M", "Sensors"],
     url: "https://github.com/aneesh223/makeohio26-intel",
   },
