@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Linkedin, Mail, Github } from "lucide-react";
 
 const Footer = () => (
-  <footer id="contact" className="py-16 px-4 border-t border-border">
+  <footer id="contact" className="py-16 px-4">
     <div className="max-w-4xl mx-auto text-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
