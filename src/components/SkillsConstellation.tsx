@@ -7,7 +7,7 @@ const leftColumn = [
   },
   {
     label: "Tools & Frameworks",
-    skills: ["PyTorch", "NumPy", "Pandas", "Git", "Flask", "Django", "Twilio", "OOP"],
+    skills: ["PyTorch", "NumPy", "Pandas", "Git", "Flask", "Django", "Twilio", "OOP", "GPIO", "ARM Cortex-M"],
   },
 ];
 
