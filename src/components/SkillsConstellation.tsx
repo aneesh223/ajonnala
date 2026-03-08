@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 const leftColumn = [
   {
     label: "Languages",
-    skills: ["Python", "Java", "R", "JavaScript", "HTML/CSS", "C/C++ (Learning)"],
+    skills: ["Python", "C++", "Java", "R", "JavaScript", "HTML/CSS"],
   },
   {
     label: "Tools & Frameworks",
