@@ -23,8 +23,8 @@ const AboutSection = () => {
               <span className="gradient-text font-semibold">
                 real world applications
               </span>{" "}
-              of AI and Machine Learning. I plan to major in CS with a
-              specialization in Machine Learning.
+              of software engineering, AI/ML, and fintech. I plan to major in CS with a
+              specialization in Machine Learning or Financial Engineering.
             </p>
           </div>
         </motion.div>
