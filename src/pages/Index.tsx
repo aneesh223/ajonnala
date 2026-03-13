@@ -1,4 +1,5 @@
 import StarfieldBackground from "@/components/StarfieldBackground";
+import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import FeaturedProject from "@/components/FeaturedProject";
@@ -11,6 +12,7 @@ const Index = () => {
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <StarfieldBackground />
+      <Navbar />
       <MusicDisc />
       <div className="relative z-10">
         <HeroSection />
