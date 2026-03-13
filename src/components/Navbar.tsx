@@ -41,7 +41,7 @@ const Navbar = () => {
             key={link.href}
             href={link.href}
             onClick={(e) => handleClick(e, link.href)}
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 hover:drop-shadow-[0_0_8px_hsl(217_91%_60%/0.5)]"
+            className={`text-sm text-muted-foreground hover:text-primary transition-colors duration-300 hover:drop-shadow-[0_0_8px_hsl(217_91%_60%/0.5)] ${'bold' in link && link.bold ? 'font-bold' : 'font-medium'}`}
           >
             {link.label}
           </a>
