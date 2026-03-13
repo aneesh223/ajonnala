@@ -36,12 +36,12 @@ const Navbar = () => {
   };
 
   return (
-    <motion.nav
-      initial={{ y: -40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
-    >
+    <div className="fixed top-4 left-0 right-0 z-50 flex justify-center">
+      <motion.nav
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
       <div className="flex items-center gap-1 px-2 py-2 rounded-full border border-border/60 bg-background/60 backdrop-blur-2xl shadow-[0_4px_30px_hsl(217_91%_60%/0.08)]">
         {navLinks.map((link) => {
           const isActive = activeSection === link.href.slice(1);
